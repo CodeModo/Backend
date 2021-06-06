@@ -10,6 +10,7 @@ const port = process.env.PORT || "3000";
 /** App Configuration **/
 
 app.use(cors());
+app.use(express.json());
 
 /** Routes Definitions **/
 app.use('/api/admin',admin);
@@ -27,6 +28,6 @@ app.use( (req, res, next) =>  { //error handler
 
 /** Server Activation **/
 
-app.listen(3000, () => {
+app.listen(port, () => {
     console.log(`Listening to requests on http://localhost:${port}`);
 });
