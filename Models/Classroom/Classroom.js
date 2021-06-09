@@ -1,6 +1,10 @@
 const mongoose = require('mongoose');
 
 const classroomSchema = new mongoose.Schema({
+    name: {
+        type: String,
+        required: true, 
+    },
     scheduleId: {
         type: String,
         required: true,
@@ -8,7 +12,6 @@ const classroomSchema = new mongoose.Schema({
     instructors: [String],
     students: [String],
     sessions: [String]
-
 },
     { timestamps: true });
 

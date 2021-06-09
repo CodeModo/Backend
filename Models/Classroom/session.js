@@ -1,6 +1,10 @@
 const mongoose = require('mongoose');
 
 const sessionSchema = new mongoose.Schema({
+    instructor : {
+        type: String,
+        required : true,
+    },
     title: {
         type: String,
         required: true,
