@@ -1,15 +1,20 @@
 /** Required External Modules **/
 const express = require("express");
 var cors = require('cors');
+require("./db_connection");
+
 
 /** App Variables **/
 
+const scheduleRouter=require("./Routers/Schedule");
 const app = express();
 const port = process.env.PORT || "3000";
 
 /** App Configuration **/
 
 app.use(cors());
+app.use(express.json());
+app.use('/api/schedule',scheduleRouter);
 
 /** Routes Definitions **/
 
@@ -22,6 +27,7 @@ app.use( (req, res, next) =>  { //error handler
     res.status(500);
     res.send({error : "server error"});
 });
+
 
 
 
