@@ -13,7 +13,9 @@ exports.Router = SessionRouter;
 SessionRouter.post('/', async (req, res) => {
     const { instructorId, title, description, meetingUrl } = req.body;
     try {
-        let newSession = await Sessions.create({ instructorId, title, description, meetingUrl, comments: [] });
+        let newSession = await Sessions.create({ 
+            instructorId, title, description, meetingUrl, comments: [], assignmentUploads : [] 
+        });
         res.statusCode = 200;
         res.send({ "message": "Created successfully" });
     } catch (err) {
@@ -84,6 +86,29 @@ SessionRouter.delete('/:id', async (req, res) => {
             await Session.deleteOne({ _id: req.params.id });
             res.statusCode = 200;
             res.send({ "message": "Session deleted" });
+        } else {
+            res.statusCode = 404;
+            res.send({ "message": "Session not found!" });
+        }
+    } catch (err) {
+        res.statusCode = 422;
+        res.send({ "message": "Something wrong, retry again!" });
+    }
+});
+
+//Add or edit assignment 
+SessionRouter.patch('/:id', async (req, res) => {
+    let { assignmentDescription } = req.body;
+    try {
+        const updatedSession = await Session.findOne({ _id: req.params.id });
+        if (updatedSession != null) {
+            await Session.updateOne(
+                { _id: req.params.id }, 
+                { 
+                    assignmentDescription : assignmentDescription
+                });
+            res.statusCode = 200;
+            res.send({ "message": "Assignment added" });
         } else {
             res.statusCode = 404;
             res.send({ "message": "Session not found!" });
