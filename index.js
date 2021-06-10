@@ -1,6 +1,7 @@
 /* Required External Modules */
 var cors = require("cors");
 require("./db_connection");
+var express = require('express');
 
 /* App Variables */
 const app = express();
