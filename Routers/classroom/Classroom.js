@@ -11,7 +11,7 @@ exports.Router = ClassroomRouter;
 
 
 //Create new classroom
-ClassroomRouter.classroom('/', async (req, res) => {
+ClassroomRouter.post('/', async (req, res) => {
     const { name, scheduleId } = req.body;
     try {
         const newClassroom = await Classroom.create({ name, scheduleId });
