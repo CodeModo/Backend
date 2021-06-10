@@ -3,7 +3,8 @@ const mongoose = require("mongoose");
 require("dotenv").config();
 
 mongoose.connect(
-  process.env.MONGO_DB || "mongodb://localhost:27017/CodeModo",
+  `mongodb+srv://rokaia-admin:${process.env.DBPASSWORD}@cluster0.i8bmm.mongodb.net/CodeModo?retryWrites=true&w=majority` 
+  || "mongodb://localhost:27017/CodeModo",
   { useNewUrlParser: true, useUnifiedTopology: true },
   (err) => {
     if (err) {

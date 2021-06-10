@@ -1,5 +1,4 @@
 /** Required External Modules **/
-
 var cors = require('cors');
 require("./db_connection");  
 
@@ -12,17 +11,15 @@ const CommentRouter = require('./Routers/SessionComments');
 const admin = require("./Routers/Admin");
 const Student = require('./Routers/Student');
 const instructor = require("./Routers/Instructor");
-const scheduleRouter=require("./Routers/Schedule");
+const scheduleRouter = require("./Routers/Schedule");
 let port = process.env.PORT || 3000;
 
 /** App Configuration **/
-
 app.use(cors());
 app.use(express.json());
 
 
 /** Routes Definitions **/
-
 app.use('/api/classroom', ClassroomRouter);
 app.use('/api/session', SessionRouter);
 app.use('/api/comment', CommentRouter);
@@ -41,8 +38,6 @@ app.use( (req, res, next) =>  { //error handler
     res.send({error : "server error"});
 
 });
-
-
 
 /** Server Activation **/
 app.listen(port, () => {
