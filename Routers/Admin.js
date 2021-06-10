@@ -18,7 +18,7 @@ routes.get('/:id',async (req,res)=>{
         return res.status(404).send({message:"Admin with givin id is not found"});
     return res.send(admin);
 });
-/*Add new Addmin*/
+/*Add new Admin*/
 routes.post('/add',
     body('email').trim().not().isEmpty()
         .withMessage('email is required'),
@@ -29,7 +29,7 @@ routes.post('/add',
     body('name').trim().isLength({min:3})
         .withMessage('name must be more than or equal 3 characters'),  
     body('password').trim().isLength({min:6})
-        .withMessage('password must be more than or equal 6 charactes')
+        .withMessage('password must be more than or equal 6 char')
     ,
     body('password').trim().not().isEmpty()
         .withMessage('password is required')
