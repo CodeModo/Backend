@@ -5,9 +5,9 @@ require("./db_connection");
 
 /** App Variables **/
 const app = express();
-const ClassroomRouter = require('./Routers/Classroom/Classroom');
-const SessionRouter = require('./Routers/Classroom/Session');
-const CommentRouter = require('./Routers/Classroom/SessionComments');
+const ClassroomRouter = require('./Routers/Classroom');
+const SessionRouter = require('./Routers/Session')
+const CommentRouter = require('./Routers/SessionComments');
 const admin = require("./Routers/Admin");
 //const instructor = require("./Routers/Instructor");
 let port = process.env.PORT || 3000;

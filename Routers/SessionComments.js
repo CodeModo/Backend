@@ -2,7 +2,7 @@ const express = require('express');
 
 const mongoose = require('mongoose');
 
-const Session = require('../../Models/Classroom/Session');
+const Session = require('../Models/Session');
 
 const CommentRouter = express.Router();
 

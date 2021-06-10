@@ -2,12 +2,11 @@ const express = require('express');
 
 const mongoose = require('mongoose');
 
-const Classroom = require('../../Models/Classroom/Classroom');
+const Classroom = require('../Models/Classroom');
 
 const ClassroomRouter = express.Router();
 
 
-exports.Router = ClassroomRouter;
 
 
 //Create new classroom
@@ -142,3 +141,5 @@ ClassroomRouter.post('/:classroomId', async (req, res) => {
         res.send({ "message": "Something wrong, retry again!" });
     }
 });
+
+module.exports = ClassroomRouter;

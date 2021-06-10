@@ -2,12 +2,12 @@ const express = require('express');
 
 const mongoose = require('mongoose');
 
-const Session = require('../../Models/Classroom/Session');
+const Session = require('../Models/Session');
 
 const SessionRouter = express.Router();
 
 
-exports.Router = SessionRouter;
+module.exports = SessionRouter;
 
 //Create new Session
 SessionRouter.post('/', async (req, res) => {
