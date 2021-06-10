@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const sessionSchema = new mongoose.Schema({
-    instructor : {
+    instructorId : {
         type: String,
         required : true,
     },
@@ -9,11 +9,15 @@ const sessionSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    url: {
+    description: {
+        type: String,
+        required: true,
+    },
+    meetingUrl: {
         type: String,
         required: true
     },
-    comment: [
+    comments: [
         {
             _id: {
                 type: mongoose.Schema.Types.ObjectId,
@@ -30,6 +34,23 @@ const sessionSchema = new mongoose.Schema({
                 required: true,
                 maxlength: 100
             }
+        }
+    ],
+    assignmentDescription : String,
+    assignmentUploads : [
+        {
+            _id: {
+                type: mongoose.Schema.Types.ObjectId,
+                index: true,
+                required: true,
+                auto: true,
+            },
+            studentId : {
+                type : String,
+                required : true,
+            },
+            file: Buffer,
+            link : String
         }
     ]
 
