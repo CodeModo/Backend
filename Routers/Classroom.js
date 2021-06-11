@@ -6,21 +6,10 @@ const Classroom = require('../Models/Classroom');
 
 const ClassroomRouter = express.Router();
 
+const authentication = require('../Middleware/Authentication');
+const authorization = require('../Middleware/Authorization');
 
 
-
-//Create new classroom
-ClassroomRouter.post('/', async (req, res) => {
-    const { name, scheduleId } = req.body;
-    try {
-        const newClassroom = await Classroom.create({ name, scheduleId });
-        res.statusCode = 200;
-        res.send({ "message": "Created successfully", "classroom": newClassroom });
-    } catch (err) {
-        res.statusCode = 400;
-        res.send({ "message": "Something wrong, retry again!" });
-    }
-});
 
 //Get a list of all Classrooms
 ClassroomRouter.get('/', async (req, res) => {
@@ -47,6 +36,21 @@ ClassroomRouter.get('/:id', async (req, res) => {
         }
     } catch (err) {
         res.statusCode = 422;
+        res.send({ "message": "Something wrong, retry again!" });
+    }
+});
+
+ClassroomRouter.use([authentication, authorization.admin]);
+
+//Create new classroom
+ClassroomRouter.post('/', async (req, res) => {
+    const { name, scheduleId } = req.body;
+    try {
+        const newClassroom = await Classroom.create({ name, scheduleId });
+        res.statusCode = 200;
+        res.send({ "message": "Created successfully", "classroom": newClassroom });
+    } catch (err) {
+        res.statusCode = 400;
         res.send({ "message": "Something wrong, retry again!" });
     }
 });

@@ -8,6 +8,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 const mongoose = require("mongoose");
 const cors = require("cors");
 
+const authentication = require("../Middleware/Authentication");
+const authorization = require('../Middleware/Authorization'); 
+
 const jwt = require("jsonwebtoken");
 const Instructor = require("../Models/Instructor");
 
@@ -16,15 +19,14 @@ instructorRouter.use(cors());
 
 instructorRouter.post("/register", async (req, res, next) => {
   try {
-    const { name, email, phone, password, specialzation, achievements } =
-      req.body;
+    const { name, email, phone, password, specialization, achievements } = req.body;
     const hash = await bcrypt.hash(password, 10);
     const instructor = await Instructor.create({
       name: name,
       email: email,
       phone: phone,
       password: hash,
-      specialzation: specialzation,
+      specialization: specialization,
       achievements: achievements,
     });
     res.statusCode = 200;
@@ -56,11 +58,11 @@ instructorRouter.post("/login", async (req, res, err) => {
       res.send(err);
       console.log(err);
     }
-    const token = jwt.sign({ id: instructor.id }, "my-signing-secret-ins");
+    const token = jwt.sign({ id: instructor.id, role : instructor.role }, "my-signing-secret");
     const newName = instructor.name;
     const email = instructor.email;
     const phone = instructor.phone;
-    const specialzation = instructor.specialzation;
+    const specialization = instructor.specialization;
     const achievements = instructor.achievements;
     res.statusCode = 200;
     res.send({
@@ -68,7 +70,7 @@ instructorRouter.post("/login", async (req, res, err) => {
       name: newName,
       email: email,
       phone: phone,
-      specialzation: specialzation,
+      specialization: specialization,
       achievements: achievements,
       message: "login-successfully",
     });
@@ -80,10 +82,12 @@ instructorRouter.post("/login", async (req, res, err) => {
   }
 });
 
+instructorRouter.use([authentication, authorization.instructor]);
+
 instructorRouter.patch("/edit/:id", async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { name, email, phone, password, specialzation, achievements } =
+    const { name, email, phone, password, specialization, achievements } =
       req.body;
     const hash = await bcrypt.hash(password, 10);
     const { authorization } = req.headers;
@@ -95,12 +99,12 @@ instructorRouter.patch("/edit/:id", async (req, res, next) => {
         password: password,
         email: email,
         phone: phone,
-        specialzation: specialzation,
+        specialization: specialization,
         achievements: achievements,
       }
     );
     res.statusCode = 200;
-    res.send({ message: "updated succefully", success: true });
+    res.send({ message: "updated successfully", success: true });
   } catch (err) {
     res.statusCode = 401;
     res.send({ success: false, message: err });

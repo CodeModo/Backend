@@ -19,13 +19,15 @@ const InstructorSchema = mongoose.Schema({
     type: String,
     required: true,
   },
-  specialzation: {
+  specialization: {
     type: String,
     required: true,
   },
   achievements: {
     type: [String],
   },
+  role:
+    { type: String, default: "Instructor", enums: ["Instructor"] }
 });
 
 const Instructor = mongoose.model("Instructor", InstructorSchema);

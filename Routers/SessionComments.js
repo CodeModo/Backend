@@ -6,17 +6,19 @@ const Session = require('../Models/Session');
 
 const CommentRouter = express.Router();
 
+const authentication = require('../Middleware/Authentication');
 
 module.exports = CommentRouter;
 
+CommentRouter.use(authentication);
 
 //Post a new comment
 CommentRouter.post('/:sessionId', async (req, res) => {
-    const { commenterId, comment} = req.body;
+    const {comment} = req.body;
     try {
         const session = await Session.findOne({ _id: req.params.sessionId }).exec();
         if (session != null) {
-            let newComment = {commenterId, comment};
+            let newComment = {commenterId : req.signedData.id, comment};
             await Session.updateOne({ _id: req.params.sessionId}, { $push: { comments: newComment } });
             res.statusCode = 200;
             res.send({ "message": "Comment added" });

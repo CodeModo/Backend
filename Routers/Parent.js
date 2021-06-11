@@ -3,9 +3,36 @@ const parentRouter = new express.Router();
 const Parent = require("../Models/Parent");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const authentication = require("../Middleware/auth");
+const authentication = require("../Middleware/Authentication");
+const authorization = require('../Middleware/Authorization'); 
 
 /// base path ===> /api/parent
+
+
+// All parent
+parentRouter.get("/", async (req, res) => {
+  try {
+    const user = await Parent.find({}, { Password: 0 });
+    res.send(user);
+  } catch (error) {
+    res.send(error);
+  }
+});
+
+
+//get parent
+parentRouter.get("/:id", async (req, res) => {
+  try {
+    const parent = await Parent.findOne(
+      { _id: req.params.id },
+      { Password: 0 }
+    );
+    res.send(parent);
+  } catch (error) {
+    res.statusCode = 422;
+    res.send(error);
+  }
+});
 
 //// Register
 parentRouter.post("/register", async (req, res) => {
@@ -47,7 +74,7 @@ parentRouter.post("/login", async (req, res) => {
     const isMatch = await bcrypt.compare(Password, user.Password);
     if (!isMatch) throw new Error("wrong username or password");
     //generate token
-    const token = jwt.sign({ id: user.id }, "my-signing-secret");
+    const token = jwt.sign({ id: user.id, role : user.role }, "my-signing-secret");
     res.json({ token });
   } catch (err) {
     if (err) {
@@ -59,64 +86,40 @@ parentRouter.post("/login", async (req, res) => {
   }
 });
 
-// All parent
-parentRouter.get("/", async (req, res) => {
-  try {
-    const user = await Parent.find({}, { Password: 0 });
-    res.send(user);
-  } catch (error) {
-    res.send(error);
-  }
-});
 
-//get parent
 
-parentRouter.get("/:id", async (req, res) => {
+/// authentication
+parentRouter.use([authentication, authorization.parent]);
+
+// add new Child
+parentRouter.patch("/Child/:id", async (req, res) => {
   try {
-    const parent = await Parent.findOne(
+    // const user = await User.findOne({ _id: req.params.id });
+    const children = await Parent.updateOne(
       { _id: req.params.id },
-      { Password: 0 }
+      { $push: { Children: req.body.child } }
     );
-    res.send(parent);
+    res.json({ message: "Updated successfully" });
   } catch (error) {
     res.statusCode = 422;
     res.send(error);
   }
 });
 
-/// authentication
-parentRouter.use(authentication);
-
-//// add new Child
-// ==========> API ???
-// parentRouter.patch("/Child/:id", async (req, res) => {
-//   try {
-//     // const user = await User.findOne({ _id: req.params.id });
-//     const children = await Parent.updateOne(
-//       { _id: req.params.id },
-//       { $push: { Children: req.body.child } }
-//     );
-//     res.json({ message: "Updated successfully" });
-//   } catch (error) {
-//     res.statusCode = 422;
-//     res.send(error);
-//   }
-// });
-
-// remove child
-// parentRouter.patch("/removeChild/:id", async (req, res) => {
-//   try {
-//     // const user = await User.findOne({ _id: req.params.id });
-//     const children = await Parent.updateOne(
-//       { _id: req.params.id },
-//       { $pull: { Children: req.body.child } }
-//     );
-//     res.json({ message: "Updated successfully" });
-//   } catch (error) {
-//     res.statusCode = 422;
-//     res.send(error);
-//   }
-// });
+//remove child
+parentRouter.patch("/removeChild/:id", async (req, res) => {
+  try {
+    // const user = await User.findOne({ _id: req.params.id });
+    const children = await Parent.updateOne(
+      { _id: req.params.id },
+      { $pull: { Children: req.body.child } }
+    );
+    res.json({ message: "Updated successfully" });
+  } catch (error) {
+    res.statusCode = 422;
+    res.send(error);
+  }
+});
 
 // update
 parentRouter.patch("/:id", async (req, res) => {
