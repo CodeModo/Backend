@@ -3,7 +3,9 @@ const express = require("express");
 const routes = express.Router();
 const { body, validationResult } = require('express-validator');
 const Admin = require('../Models/Admin');
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcrypt');
+const jwt = require("jsonwebtoken");
+
 
 const authentication = require('../Middleware/Authentication');
 const authorization = require('../Middleware/Authorization');
@@ -14,9 +16,9 @@ const authorization = require('../Middleware/Authorization');
 routes.post("/login", async (req, res) => {
     try {
         const { email, password } = req.body;
-        const user = await Admin.findOne({ Email }).exec();
+        const user = await Admin.findOne({ email }).exec();
         if (!user) throw new Error("wrong Email or Password");
-        const isMatch = await bcrypt.compare(password, user.Password);
+        const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) throw new Error("wrong username or password");
         //generate token
         const token = jwt.sign({ id: user.id, role: user.role }, "my-signing-secret");
