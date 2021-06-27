@@ -43,9 +43,10 @@ ClassroomRouter.get('/:id', async (req, res) => {
 
 ClassroomRouter.get('/studentOfClassroom/:id', async (req, res) => {
     try{
-        const studentIds = await Classroom.findOne({_id: req.params.id},{students}).exec();
-        if(studentIds.length > 0){
-            const studentList = await Student.find({_id : { $in: studentIds}}).exec();
+        const studentIds = await Classroom.findOne({_id: req.params.id},'students').exec();
+        console.log(studentIds);
+        if(studentIds['students'].length > 0){
+            const studentList = await Student.find({_id : { $in: studentIds['students']}}).exec();
             res.statusCode = 200;
             res.send(studentList);
         }else
@@ -54,6 +55,7 @@ ClassroomRouter.get('/studentOfClassroom/:id', async (req, res) => {
             res.send({"message" : "No students found"});
         }
     } catch(err){
+        console.error(err.message);
         res.statusCode = 422;
         res.send({ "message": "Something wrong, retry again!" });
     }
