@@ -81,7 +81,7 @@ StudentRouter.get('/profile/:id',async (req,res,next)=>{                  //retr
     })
 
 //get all students
-StudentRouter.get('/allStudents', async (req, res, next) => {                    //done
+StudentRouter.get('/allStudents', async (req, res, next) => {                   
     try {
         const students = await Student.find({});
         res.statusCode = 200;
