@@ -2,17 +2,20 @@ const express =require('express');
 var bcrypt = require('bcrypt');
 const app = express();
 app.use(express.json());
-const mongoose= require('mongoose');
+const mongoose = require('mongoose');
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
 const Student = require('../Models/Student');
 var bodyParser = require('body-parser');
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended:true}));
+app.use(bodyParser.urlencoded({ extended: true }));
 
+const authentication = require('../Middleware/Authentication');
+const authorization = require('../Middleware/Authorization'); 
 
-const StudentRouter= new express.Router();
+const StudentRouter = new express.Router();
 StudentRouter.use(cors());
+
 
 StudentRouter.post('/Create',async (req,res,next)=>{                   //create
 try{
@@ -70,70 +73,87 @@ StudentRouter.get('/profile/:id',async (req,res,next)=>{                  //retr
         const student = await Student.findOne({_id:id});
         res.statusCode=200;
         res.send({success:true,student});
+    }
+        catch (err) {
+            res.statusCode = 401;
+            res.send({ message: err, success: false })
+        }
+    })
+
+//get all students
+StudentRouter.get('/allStudents', async (req, res, next) => {                    //done
+    try {
+        const students = await Student.find({});
+        res.statusCode = 200;
+        res.send(students);
+
         next();
     }
-    catch(err){
+    catch (err) {
+        res.statusCode = 401;
+        res.send({ message: err, success: false })
+    }
+})
+
+StudentRouter.get('/profile/:id', async (req, res, next) => {                  //retrieve
+    try {
+        const { id } = req.params;
+        const student = await Student.findOne({ _id: id });
+        res.statusCode = 200;
+        res.send({ success: true, student });
+        next();
+    }
+    catch (err) {
         console.log("hi error");
         res.statusCode = 401;
-        res.send({success:false, message:`Authentication failed`});
+        res.send({ success: false, message: `Authentication failed` });
         console.log(err);
     }
 })
 
+
+
+StudentRouter.use([authentication, authorization.parent]);
+
+
+
+
 //update
-StudentRouter.patch('/edit/:id',async (req,res,next)=>{
-    try{
-const {id} =req.params;
-const {_Fname,_Lname,_BirthDate,_UserName,_Password} = req.body;
-//const s= Student.findOne()
-await Student.updateOne({_id:id},{Fname:_Fname,Lname:_Lname,BirthDate:_BirthDate,UserName:_UserName,Password:_Password}) 
-res.statusCode=200;
-res.send({message:'updated successfully',success:true});
-        next();   
-}
-    catch(err){
+StudentRouter.patch('/edit/:id', async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const { _Fname, _Lname, _BirthDate, _UserName, _Password } = req.body;
+        //const s= Student.findOne()
+        await Student.updateOne({ _id: id }, { Fname: _Fname, Lname: _Lname, BirthDate: _BirthDate, UserName: _UserName, Password: _Password })
+        res.statusCode = 200;
+        res.send({ message: 'updated successfully', success: true });
+        next();
+    }
+    catch (err) {
         res.statusCode = 401;
-        res.send({success:false, message:err});
-        
+        res.send({ success: false, message: err });
+
     }
-})
+});
 
 
 
 
-//delete
-StudentRouter.delete('/delete/:id',async (req,res,next)=>{     
-    try{
-const {id} = req.params;
-await Student.deleteOne({_id:id});
-res.statusCode=200;
-res.send({success:true,message:"deleted Succefully"});
-next();
-    }
-    catch(err){
-        res.statusCode=401;
-        res.send({success:false,message:err})
-    }
-})
 
 
 
 
-//get all students
-StudentRouter.get('/allStudents',async (req,res,next)=>{                    //done
-    try{
-const students =await Student.find({});
-res.statusCode=200;
-res.send(students);
-next();
-}
-    catch(err){
-        res.statusCode=401;
-        res.send({message:err,success:false})
-    }
-})
 
 
 
 
-module.exports=StudentRouter;
+
+
+
+
+
+
+
+
+
+

@@ -6,23 +6,11 @@ const Session = require('../Models/Session');
 
 const SessionRouter = express.Router();
 
+const authentication = require('../Middleware/Authentication');
+const authorization = require('../Middleware/Authorization');
 
 module.exports = SessionRouter;
 
-//Create new Session
-SessionRouter.post('/', async (req, res) => {
-    const { instructorId, title, description, meetingUrl } = req.body;
-    try {
-        let newSession = await Sessions.create({ 
-            instructorId, title, description, meetingUrl, comments: [], assignmentUploads : [] 
-        });
-        res.statusCode = 200;
-        res.send({ "message": "Created successfully" });
-    } catch (err) {
-        res.statusCode = 400;
-        res.send({ "message": "Something wrong, retry again!" });
-    }
-});
 
 //Get a list of all Sessions
 SessionRouter.get('/', async (req, res) => {
@@ -49,6 +37,24 @@ SessionRouter.get('/:id', async (req, res) => {
         }
     } catch (err) {
         res.statusCode = 422;
+        res.send({ "message": "Something wrong, retry again!" });
+    }
+});
+
+
+//Create new Session
+SessionRouter.use([authentication, authorization.instructor]);
+
+SessionRouter.post('/', async (req, res) => {
+    const { title, description, meetingUrl } = req.body;
+    try {
+        let newSession = await Session.create({ 
+             title, description, meetingUrl, instructorId : req.signedData.id , comments: [], assignmentUploads : [] 
+        });
+        res.statusCode = 200;
+        res.send({ "message": "Created successfully" });
+    } catch (err) {
+        res.statusCode = 400;
         res.send({ "message": "Something wrong, retry again!" });
     }
 });

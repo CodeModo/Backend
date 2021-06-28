@@ -7,7 +7,6 @@ const schema = mongoose.Schema({
     maxlength: 20,
     minlength: 4,
   },
-
   Password: {
     type: String,
     required: true,
@@ -27,6 +26,8 @@ const schema = mongoose.Schema({
   },
 
   Children: [String],
+  role:
+  { type: String, default: "Parent", enums: ["Parent"] }
 });
 
 const Parent = mongoose.model("Parent", schema);

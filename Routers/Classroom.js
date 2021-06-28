@@ -3,24 +3,14 @@ const express = require('express');
 const mongoose = require('mongoose');
 
 const Classroom = require('../Models/Classroom');
+const Student = require('../Models/Student');
 
 const ClassroomRouter = express.Router();
 
+const authentication = require('../Middleware/Authentication');
+const authorization = require('../Middleware/Authorization');
 
 
-
-//Create new classroom
-ClassroomRouter.post('/', async (req, res) => {
-    const { name, scheduleId } = req.body;
-    try {
-        const newClassroom = await Classroom.create({ name, scheduleId });
-        res.statusCode = 200;
-        res.send({ "message": "Created successfully", "classroom": newClassroom });
-    } catch (err) {
-        res.statusCode = 400;
-        res.send({ "message": "Something wrong, retry again!" });
-    }
-});
 
 //Get a list of all Classrooms
 ClassroomRouter.get('/', async (req, res) => {
@@ -47,6 +37,42 @@ ClassroomRouter.get('/:id', async (req, res) => {
         }
     } catch (err) {
         res.statusCode = 422;
+        res.send({ "message": "Something wrong, retry again!" });
+    }
+});
+
+ClassroomRouter.get('/studentOfClassroom/:id', async (req, res) => {
+    try{
+        const studentIds = await Classroom.findOne({_id: req.params.id},'students').exec();
+        console.log(studentIds);
+        if(studentIds['students'].length > 0){
+            const studentList = await Student.find({_id : { $in: studentIds['students']}}).exec();
+            res.statusCode = 200;
+            res.send(studentList);
+        }else
+        {
+            res.statusCode = 401;
+            res.send({"message" : "No students found"});
+        }
+    } catch(err){
+        console.error(err.message);
+        res.statusCode = 422;
+        res.send({ "message": "Something wrong, retry again!" });
+    }
+   
+});
+
+ClassroomRouter.use([authentication, authorization.admin]);
+
+//Create new classroom
+ClassroomRouter.post('/', async (req, res) => {
+    const { name, scheduleId } = req.body;
+    try {
+        const newClassroom = await Classroom.create({ name, scheduleId });
+        res.statusCode = 200;
+        res.send({ "message": "Created successfully", "classroom": newClassroom });
+    } catch (err) {
+        res.statusCode = 400;
         res.send({ "message": "Something wrong, retry again!" });
     }
 });
@@ -141,5 +167,6 @@ ClassroomRouter.post('/:classroomId', async (req, res) => {
         res.send({ "message": "Something wrong, retry again!" });
     }
 });
+
 
 module.exports = ClassroomRouter;

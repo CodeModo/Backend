@@ -21,7 +21,9 @@ const StudentSchema=new mongoose.Schema({
         type:String,
         required:true,
         unique:true
-    }
+    },
+    role:
+  { type: String, default: "Student", enums: ["Student"] }
 })
 const Student = mongoose.model('Student',StudentSchema);
 module.exports=Student;

@@ -2,21 +2,13 @@ const express = require("express");
 const CourseRouter = express.Router();
 const Course = require("../Models/Courses");
 
+
+
+const authentication = require('../Middleware/Authentication');
+const authorization = require('../Middleware/Authorization');
+
 ///////base /api/course
 
-CourseRouter.post('/', async (req, res) => {
-    try {
-        console.log(req.body);
-        const Name = req.body.Name;
-        const Level = req.body.Level;
-        const Description = req.body.Description
-        const newcourse = await Course.create({ Name, Level, Description });
-        res.send(newcourse);
-    } catch (error) {
-        res.statusCode = 422;
-        res.send(error);
-    }
-});
 
 //get course By ID
 CourseRouter.get('/:id', async (req, res) => {
@@ -50,6 +42,23 @@ CourseRouter.get('/', async (req, res) => {
         res.send(error);
     }
 })
+
+CourseRouter.use([authentication, authorization.instructor]);
+
+CourseRouter.post('/', async (req, res) => {
+    try {
+        console.log(req.body);
+        const Name = req.body.Name;
+        const Level = req.body.Level;
+        const Description = req.body.Description
+        const newCourse = await Course.create({ Name, Level, Description });
+        res.send(newCourse);
+    } catch (error) {
+        res.statusCode = 422;
+        res.send(error);
+    }
+});
+
 
 ///Edit
 CourseRouter.patch('/:id', async (req, res) => {

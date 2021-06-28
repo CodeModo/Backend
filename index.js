@@ -1,6 +1,7 @@
 /* Required External Modules */
 var cors = require("cors");
 require("./db_connection");
+var express = require('express');
 
 /* App Variables */
 const app = express();
@@ -24,9 +25,9 @@ app.use(express.json());
 app.use("/api/classroom", ClassroomRouter);
 app.use("/api/session", SessionRouter);
 app.use("/api/comment", CommentRouter);
-app.use("api/admin", admin);
+app.use("/api/admin", admin);
 app.use("/api/Student", Student);
-app.use("api/instructor", instructor);
+app.use("/api/instructor", instructor);
 app.use("/api/schedule", scheduleRouter);
 app.use("/api/course", CourseRouter);
 app.use("/api/parent", parentRouter);
