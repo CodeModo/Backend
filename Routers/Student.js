@@ -1,5 +1,5 @@
 const express =require('express');
- 
+var bcrypt = require('bcrypt');
 const app = express();
 app.use(express.json());
 const mongoose= require('mongoose');
@@ -18,7 +18,8 @@ StudentRouter.post('/Create',async (req,res,next)=>{                   //create
 try{
     console.log(req.body)
 const {Fname,Lname,BirthDate,UserName,Password}= req.body;
-const student = await Student.create({Fname:Fname,Lname:Lname,BirthDate:BirthDate,UserName:UserName,Password:Password}) ;
+const hash = await bcrypt.hash(Password,10);
+const student = await Student.create({Fname:Fname,Lname:Lname,BirthDate:BirthDate,UserName:UserName,Password:hash}) ;
 res.statusCode=200;
 res.send({message:'Created succefully'});
 
@@ -28,6 +29,39 @@ res.statusCode=401;
 res.send(err);
 console.log(err);
 }
+})
+
+/////////////////login
+
+StudentRouter.post('/login', async(req,res,next)=>{
+    try{
+        const {username,password} = req.body;
+        const user =await Student.findOne({UserName:username});
+        if(!user){
+            err =new Error("wrong username");
+            res.statusCode = 401;
+            res.send(err);
+            
+        }
+
+        const isMatch =await bcrypt.compare(password,user.Password);
+        if(! isMatch){
+            err =new Error("wrong password");
+            res.statusCode = 402;
+            res.send(err);
+            
+        }
+        const token = jwt.sign({id:user.id},'my-signing-secret');
+        const userName =user.UserName;
+        res.statusCode =200;
+        res.send({token:token,message:"login-successfully",userName});
+        next();
+    }
+    catch(err){
+        res.statusCode = 422;
+        res.json({success:'false',message:err.message});
+        
+    }
 })
 
 StudentRouter.get('/profile/:id',async (req,res,next)=>{                  //retrieve
