@@ -45,7 +45,7 @@ instructorRouter.post("/login", async (req, res, err) => {
     const { name, password } = req.body;
     const instructor = await Instructor.findOne({ name: name });
     if (!instructor) {
-      err = new Error("wrong username or password");
+      err = new Error("wrong username ");
       res.statusCode = 401;
       res.send(err);
       console.log(err);
@@ -53,8 +53,8 @@ instructorRouter.post("/login", async (req, res, err) => {
 
     const isMatch = await bcrypt.compare(password, instructor.password);
     if (!isMatch) {
-      err = new Error("wrong username or password");
-      res.statusCode = 401;
+      err = new Error("wrong password");
+      res.statusCode = 402;
       res.send(err);
       console.log(err);
     }
