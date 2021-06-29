@@ -17,6 +17,8 @@ const StudentRouter = new express.Router();
 StudentRouter.use(cors());
 
 
+module.exports = StudentRouter;
+
 StudentRouter.post('/Create',async (req,res,next)=>{                   //create
 try{
     console.log(req.body)
