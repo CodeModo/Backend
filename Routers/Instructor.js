@@ -65,6 +65,7 @@ instructorRouter.post("/login", async (req, res, err) => {
       { id: instructor.id, role: instructor.role },
       "my-signing-secret"
     );
+    const id = instructor._id;
     const newName = instructor.name;
     const email = instructor.email;
     const phone = instructor.phone;
@@ -73,6 +74,7 @@ instructorRouter.post("/login", async (req, res, err) => {
     res.statusCode = 200;
     res.send({
       token: token,
+      id: id,
       name: newName,
       email: email,
       phone: phone,
@@ -132,7 +134,7 @@ instructorRouter.get("/getall", async (req, res, next) => {
 instructorRouter.get("/getbyid/:id", async (req, res, next) => {
   try {
     const { id } = req.params;
-    const instructors = await Instructor.findOne(
+    const instructor = await Instructor.findOne(
       { _id: id },
       { password: 0, __v: 0 }
     );
