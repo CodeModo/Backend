@@ -12,12 +12,10 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 const authentication = require('../Middleware/Authentication');
 const authorization = require('../Middleware/Authorization'); 
-
 const StudentRouter = new express.Router();
 StudentRouter.use(cors());
 
 
-module.exports = StudentRouter;
 
 StudentRouter.post('/Create',async (req,res,next)=>{                   //create
 try{
@@ -140,7 +138,7 @@ StudentRouter.patch('/edit/:id', async (req, res, next) => {
 
 
 
-
+module.exports = StudentRouter;
 
 
 

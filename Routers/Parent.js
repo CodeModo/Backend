@@ -70,9 +70,17 @@ parentRouter.post("/login", async (req, res) => {
   try {
     const { Email, Password } = req.body;
     const user = await Parent.findOne({ Email }).exec();
-    if (!user) throw new Error("wrong Email or Password");
+    if (!user) {
+      err =new Error("wrong username");
+      res.statusCode = 401;
+      res.send(err);
+    }
     const isMatch = await bcrypt.compare(Password, user.Password);
-    if (!isMatch) throw new Error("wrong username or password");
+    if (!isMatch) {
+      err =new Error("wrong Password");
+      res.statusCode = 402;
+      res.send(err);
+    }
     //generate token
     const token = jwt.sign({ id: user.id, role : user.role }, "my-signing-secret");
     res.json({ token });
