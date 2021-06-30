@@ -92,12 +92,11 @@ instructorRouter.post("/login", async (req, res, err) => {
 
 instructorRouter.use([authentication, authorization.instructor]);
 
-instructorRouter.get("/profile", async (req, res, next) => {
+instructorRouter.get("/profile/:id", async (req, res, next) => {
   try {
-    const { authorization } = req.headers;
-    const signedData = jwt.verify(authorization, "my-signing-secret");
+    const { id } = req.params;
     const instructor = await Instructor.findOne(
-      { _id: signedData.id },
+      { _id: id },
       { password: 0, __v: 0 }
     );
     if (instructor) {
