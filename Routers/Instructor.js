@@ -9,17 +9,20 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 
 const authentication = require("../Middleware/Authentication");
-const authorization = require('../Middleware/Authorization'); 
+const authorization = require("../Middleware/Authorization");
 
 const jwt = require("jsonwebtoken");
 const Instructor = require("../Models/Instructor");
+const Admin = require("../Models/Admin");
+const e = require("express");
 
 const instructorRouter = new express.Router();
 instructorRouter.use(cors());
 
 instructorRouter.post("/register", async (req, res, next) => {
   try {
-    const { name, email, phone, password, specialization, achievements } = req.body;
+    const { name, email, phone, password, specialization, achievements } =
+      req.body;
     const hash = await bcrypt.hash(password, 10);
     const instructor = await Instructor.create({
       name: name,
@@ -58,7 +61,11 @@ instructorRouter.post("/login", async (req, res, err) => {
       res.send(err);
       console.log(err);
     }
-    const token = jwt.sign({ id: instructor.id, role : instructor.role }, "my-signing-secret");
+    const token = jwt.sign(
+      { id: instructor.id, role: instructor.role },
+      "my-signing-secret"
+    );
+    const id = instructor._id;
     const newName = instructor.name;
     const email = instructor.email;
     const phone = instructor.phone;
@@ -67,6 +74,7 @@ instructorRouter.post("/login", async (req, res, err) => {
     res.statusCode = 200;
     res.send({
       token: token,
+      id: id,
       name: newName,
       email: email,
       phone: phone,
@@ -84,6 +92,66 @@ instructorRouter.post("/login", async (req, res, err) => {
 
 instructorRouter.use([authentication, authorization.instructor]);
 
+instructorRouter.get("/profile", async (req, res, next) => {
+  try {
+    const { authorization } = req.headers;
+    const signedData = jwt.verify(authorization, "my-signing-secret");
+    const instructor = await Instructor.findOne(
+      { _id: signedData.id },
+      { password: 0, __v: 0 }
+    );
+    if (instructor) {
+      res.statusCode = 200;
+      res.send({ success: true, instructor });
+    } else {
+      res.statusCode = 402;
+      res.send({ success: false, message: `Not Found` });
+    }
+    next();
+  } catch (err) {
+    res.statusCode = 403;
+    res.send({ success: false, message: err.message });
+  }
+});
+
+instructorRouter.get("/getall", async (req, res, next) => {
+  try {
+    const instructors = await Instructor.find({}, { password: 0, __v: 0 });
+    if (instructors) {
+      res.statusCode = 200;
+      res.send({ success: true, instructors: instructors });
+    } else {
+      res.statusCode = 200;
+      res.send({ success: true, message: "Empty List" });
+    }
+    next();
+  } catch (err) {
+    res.statusCode = 403;
+    res.send({ success: false, message: err.message });
+  }
+});
+
+instructorRouter.get("/getbyid/:id", async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const instructor = await Instructor.findOne(
+      { _id: id },
+      { password: 0, __v: 0 }
+    );
+    if (instructor) {
+      res.statusCode = 200;
+      res.send({ success: true, instructor: instructor });
+    } else {
+      res.statusCode = 200;
+      res.send({ success: true, message: "Not Found" });
+    }
+    next();
+  } catch (err) {
+    res.statusCode = 403;
+    res.send({ success: false, message: err.message });
+  }
+});
+
 instructorRouter.patch("/edit/:id", async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -91,7 +159,7 @@ instructorRouter.patch("/edit/:id", async (req, res, next) => {
       req.body;
     const hash = await bcrypt.hash(password, 10);
     const { authorization } = req.headers;
-    const signedData = jwt.verify(authorization, "my-signing-secret-ins");
+    const signedData = jwt.verify(authorization, "my-signing-secret");
     var result = await Instructor.updateOne(
       { _id: signedData.id },
       {
