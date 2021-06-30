@@ -116,7 +116,7 @@ ClassroomRouter.delete('/:id', async (req, res) => {
 });
 
 //Add student to a classroom
-ClassroomRouter.post('addStudent/:classroomId', async (req, res) => {
+ClassroomRouter.post('/addStudent/:classroomId', async (req, res) => {
     try {
         const classroom = await Classroom.findOne({ _id: req.params.classroomId }).exec();
         if (classroom != null) {
@@ -134,7 +134,7 @@ ClassroomRouter.post('addStudent/:classroomId', async (req, res) => {
 });
 
 //Add student to a course
-ClassroomRouter.post('addCourse/:classroomId', async (req, res) => {
+ClassroomRouter.post('/addCourse/:classroomId', async (req, res) => {
     try {
         const classroom = await Classroom.findOne({ _id: req.params.classroomId }).exec();
         if (classroom != null) {
@@ -152,7 +152,7 @@ ClassroomRouter.post('addCourse/:classroomId', async (req, res) => {
 });
 
 //Add instructor to a classroom
-ClassroomRouter.post('addInstructor/:classroomId', async (req, res) => {
+ClassroomRouter.post('/addInstructor/:classroomId', async (req, res) => {
     try {
         const classroom = await Classroom.findOne({ _id: req.params.classroomId }).exec();
         if (classroom != null) {
@@ -170,7 +170,7 @@ ClassroomRouter.post('addInstructor/:classroomId', async (req, res) => {
 });
 
 //Add session to a classroom
-ClassroomRouter.post('addSession/:classroomId', async (req, res) => {
+ClassroomRouter.post('/addSession/:classroomId', async (req, res) => {
     try {
         const classroom = await Classroom.findOne({ _id: req.params.classroomId }).exec();
         if (classroom != null) {
