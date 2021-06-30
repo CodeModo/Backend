@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
 const Classroom = require('../Models/Classroom');
 const Student = require('../Models/Student');
 
+
 const ClassroomRouter = express.Router();
 
 const authentication = require('../Middleware/Authentication');
@@ -122,6 +123,24 @@ ClassroomRouter.post('/:classroomId', async (req, res) => {
             await Classroom.updateOne({ _id: req.params.classroomId }, { $push: { students: req.body.studentId} });
             res.statusCode = 200;
             res.send({ "message": "Student added" });
+        } else {
+            res.statusCode = 404;
+            res.send({ "message": "Classroom not found!" });
+        }
+    } catch (err) {
+        res.statusCode = 422;
+        res.send({ "message": "Something wrong, retry again!" });
+    }
+});
+
+//Add student to a course
+ClassroomRouter.post('/:classroomId', async (req, res) => {
+    try {
+        const classroom = await Classroom.findOne({ _id: req.params.classroomId }).exec();
+        if (classroom != null) {
+            await Classroom.updateOne({ _id: req.params.classroomId }, { $push: { courses: req.body.courseId} });
+            res.statusCode = 200;
+            res.send({ "message": "Course added" });
         } else {
             res.statusCode = 404;
             res.send({ "message": "Classroom not found!" });

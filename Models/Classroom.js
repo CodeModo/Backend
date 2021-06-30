@@ -11,7 +11,8 @@ const classroomSchema = new mongoose.Schema({
     },
     instructors: [String],
     students: [String],
-    sessions: [String]
+    sessions: [String],
+    courses : [String]
 },
     { timestamps: true });
 
