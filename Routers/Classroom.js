@@ -169,23 +169,5 @@ ClassroomRouter.post('/addInstructor/:classroomId', async (req, res) => {
     }
 });
 
-//Add session to a classroom
-ClassroomRouter.post('/addSession/:classroomId', async (req, res) => {
-    try {
-        const classroom = await Classroom.findOne({ _id: req.params.classroomId }).exec();
-        if (classroom != null) {
-            await Classroom.updateOne({ _id: req.params.classroomId }, { $push: { sessions: req.body.sessionId} });
-            res.statusCode = 200;
-            res.send({ "message": "Session added"});
-        } else {
-            res.statusCode = 404;
-            res.send({ "message": "Classroom not found!" });
-        }
-    } catch (err) {
-        res.statusCode = 422;
-        res.send({ "message": "Something wrong, retry again!" });
-    }
-});
-
 
 module.exports = ClassroomRouter;

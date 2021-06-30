@@ -3,6 +3,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 
 const Session = require('../Models/Session');
+const Classroom = require('../Models/Classroom');
 
 const SessionRouter = express.Router();
 
@@ -45,14 +46,23 @@ SessionRouter.get('/:id', async (req, res) => {
 //Create new Session
 SessionRouter.use([authentication, authorization.instructor]);
 
-SessionRouter.post('/', async (req, res) => {
+SessionRouter.post('/:classroomId', async (req, res) => {
     const { title, description, meetingUrl } = req.body;
     try {
+        classroom = await Classroom.findOne({_id: req.params.classroomId});
+        if(classroom != null){
         let newSession = await Session.create({ 
              title, description, meetingUrl, instructorId : req.signedData.id , comments: [], assignmentUploads : [] 
         });
+        console.log(newSession._id);
+        await Classroom.updateOne({ _id: req.params.classroomId }, { $push: { sessions: newSession._id} });
+
         res.statusCode = 200;
         res.send({ "message": "Created successfully" });
+    }else{
+        res.statusCode = 404;
+        res.send({"message": "Classroom not found"});
+    }
     } catch (err) {
         res.statusCode = 400;
         res.send({ "message": "Something wrong, retry again!" });
