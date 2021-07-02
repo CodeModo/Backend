@@ -14,6 +14,16 @@ scheduleRouter.get("/", async (req, res) => {
   }
 });
 
+
+scheduleRouter.get("/:id", async (req, res) => {
+  try {
+    const schedule = await Schedule.findOne({_id: req.params.id});
+    res.send( schedule );
+  } catch (error) {
+    res.send(error.message);
+  }
+});
+
 scheduleRouter.use([authentication, authorization.admin]);
 //Add schedule
 scheduleRouter.post('/', async (req, res) => {
