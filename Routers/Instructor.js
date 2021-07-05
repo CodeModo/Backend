@@ -51,7 +51,7 @@ instructorRouter.post("/login", async (req, res, err) => {
       err = new Error("wrong username ");
       res.statusCode = 401;
       res.send(err);
-      console.log(err);
+      console.error(err.message);
     }
 
     const isMatch = await bcrypt.compare(password, instructor.password);

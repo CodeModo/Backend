@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 
 const Classroom = require('../Models/Classroom');
 const Student = require('../Models/Student');
-
+const Instructor = require('../Models/Instructor');
 
 const ClassroomRouter = express.Router();
 
@@ -61,6 +61,20 @@ ClassroomRouter.get('/studentOfClassroom/:id', async (req, res) => {
         res.send({ "message": "Something wrong, retry again!" });
     }
    
+});
+
+//Get instructor's classrooms list
+ClassroomRouter.get('/classrooms/:instructorId', async (req, res) =>{
+    try {
+        const classroomList = await Classroom.find({instructors : req.params.instructorId},'name  _id').exec();
+        res.statusCode = 200;
+        res.send(classroomList)
+    } catch (error) {
+        console.error(error.message)
+        res.statusCode = 422;
+        res.send({ "message": "Something wrong, retry again!" });
+    }
+
 });
 
 ClassroomRouter.use([authentication, authorization.admin]);
