@@ -65,7 +65,7 @@ SessionRouter.post('/:classroomId', async (req, res) => {
     }
     } catch (err) {
         res.statusCode = 400;
-        res.send({ "message": "Something wrong, retry again!" });
+        res.send({ "message": err.message });
     }
 });
 
