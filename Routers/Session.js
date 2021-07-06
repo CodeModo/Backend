@@ -58,7 +58,7 @@ SessionRouter.post('/:classroomId', async (req, res) => {
         await Classroom.updateOne({ _id: req.params.classroomId }, { $push: { sessions: newSession._id} });
 
         res.statusCode = 200;
-        res.send({ "message": "Created successfully" });
+        res.send({ "message": "Created successfully", "session" : newSession });
     }else{
         res.statusCode = 404;
         res.send({"message": "Classroom not found"});
